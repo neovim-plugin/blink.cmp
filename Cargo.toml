@@ -13,7 +13,7 @@ c-marshalling = { git = "https://github.com/distil/rust_lua_ffi" }
 lua-marshalling = { git = "https://github.com/distil/rust_lua_ffi" }
 regex = "1.10.5"
 lazy_static = "1.5.0"
-frizbee = { git = "https://github.com/0xjwlabs/frizbee" }
+frizbee = { git = "https://github.com/saghen/frizbee" }
 serde = { version = "1.0.204", features = ["derive"] }
 heed = "0.20.3"
 
