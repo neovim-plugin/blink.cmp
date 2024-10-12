@@ -47,10 +47,12 @@
 --- @field signature_help? blink.cmp.SignatureHelpTriggerConfig
 
 --- @class blink.cmp.SourceConfig
---- @field providers? blink.cmp.SourceProviderConfig[][]
+--- @field providers? blink.cmp.SourceProviderConfig[]
 ---
 --- @class blink.cmp.SourceProviderConfig
 --- @field [1]? string
+--- @field name string
+--- @field fallback_for? string[] | nil
 --- @field keyword_length? number | nil
 --- @field score_offset? number | nil
 --- @field deduplicate? blink.cmp.DeduplicateConfig | nil
@@ -87,7 +89,7 @@
 --- @field border? blink.cmp.WindowBorder
 --- @field order? "top_down" | "bottom_up"
 --- @field direction_priority? ("n" | "s")[]
---- @field preselect? boolean
+--- @field selection? "preselect" | "manual" | "auto_insert"
 --- @field winhighlight? string
 --- @field scrolloff? number
 --- @field draw? 'simple' | 'reversed' | 'minimal' | function(blink.cmp.CompletionRenderContext): blink.cmp.Component[]
@@ -228,12 +230,10 @@ local config = {
     -- returns no completion items
     -- WARN: This API will have breaking changes during the beta
     providers = {
-      {
-        { 'blink.cmp.sources.lsp' },
-        { 'blink.cmp.sources.path' },
-        { 'blink.cmp.sources.snippets', score_offset = -2 },
-      },
-      { { 'blink.cmp.sources.buffer' } },
+      { 'blink.cmp.sources.lsp', name = 'LSP' },
+      { 'blink.cmp.sources.path', name = 'Path', score_offset = 3 },
+      { 'blink.cmp.sources.snippets', name = 'Snippets', score_offset = -3 },
+      { 'blink.cmp.sources.buffer', name = 'Buffer', fallback_for = { 'LSP' } },
     },
   },
 
@@ -250,8 +250,11 @@ local config = {
       -- which directions to show the window,
       -- falling back to the next direction when there's not enough space
       direction_priority = { 's', 'n' },
-      -- whether to preselect the first item in the completion list
-      preselect = true,
+      -- Controls how the completion items are selected
+      -- 'preselect' will automatically select the first item in the completion list
+      -- 'manual' will not select any item by default
+      -- 'auto_insert' will not select any item by default, and insert the completion items automatically when selecting them
+      selection = 'preselect',
       -- Controls how the completion items are rendered on the popup window
       -- 'simple' will render the item's kind icon the left alongside the label
       -- 'reversed' will render the label on the left and the kind icon + name on the right

@@ -227,48 +227,51 @@ MiniDeps.add({
     -- returns no completion items
     -- WARN: This API will have breaking changes during the beta
     providers = {
-      {
-        { 'blink.cmp.sources.lsp' },
-        { 'blink.cmp.sources.path' },
-        { 'blink.cmp.sources.snippets', score_offset = -3 },
-      },
-      { { 'blink.cmp.sources.buffer' } },
+      { 'blink.cmp.sources.lsp', name = 'LSP' },
+      { 'blink.cmp.sources.path', name = 'Path', score_offset = 3 },
+      { 'blink.cmp.sources.snippets', score_offset = -3 },
+      { 'blink.cmp.sources.buffer', name = 'Buffer', fallback_for = { 'LSP' } },
     },
     -- FOR REF: full example
     providers = {
+      -- all of these properties work on every source
+      {
+          'blink.cmp.sources.lsp',
+          name = 'LSP',
+          keyword_length = 0,
+          score_offset = 0,
+          trigger_characters = { 'f', 'o', 'o' },
+      }, 
+      -- the following two sources have additional options
       { 
-        -- all of these properties work on every source
-        {
-            'blink.cmp.sources.lsp',
-            keyword_length = 0,
-            score_offset = 0,
-            trigger_characters = { 'f', 'o', 'o' },
-            opts = {},
-        }, 
-        -- the follow two sources have additional options
-        { 
-          'blink.cmp.sources.path', 
-          opts = {
-            trailing_slash = false,
-            label_trailing_slash = true,
-            get_cwd = function(context) return vim.fn.expand(('#%d:p:h'):format(context.bufnr)) end,
-            show_hidden_files_by_default = true,
-          }
-        },
-        {
-          'blink.cmp.sources.snippets',
-          score_offset = -3,
-          -- similar to https://github.com/garymjr/nvim-snippets
-          opts = {
-            friendly_snippets = true,
-            search_paths = { vim.fn.stdpath('config') .. '/snippets' },
-            global_snippets = { 'all' },
-            extended_filetypes = {},
-            ignored_filetypes = {},
-          },
+        'blink.cmp.sources.path', 
+        name = 'Path',
+        score_offset = 3,
+        opts = {
+          trailing_slash = false,
+          label_trailing_slash = true,
+          get_cwd = function(context) return vim.fn.expand(('#%d:p:h'):format(context.bufnr)) end,
+          show_hidden_files_by_default = true,
+        }
+      },
+      {
+        'blink.cmp.sources.snippets',
+        name = 'Snippets',
+        score_offset = -3,
+        -- similar to https://github.com/garymjr/nvim-snippets
+        opts = {
+          friendly_snippets = true,
+          search_paths = { vim.fn.stdpath('config') .. '/snippets' },
+          global_snippets = { 'all' },
+          extended_filetypes = {},
+          ignored_filetypes = {},
         },
       },
-      { { 'blink.cmp.sources.buffer' } }
+      { 
+        'blink.cmp.sources.buffer',
+        name = 'Buffer',
+        fallback_for = { 'LSP' },
+      }
     }
   },
 
@@ -283,8 +286,11 @@ MiniDeps.add({
       -- which directions to show the window,
       -- falling back to the next direction when there's not enough space
       direction_priority = { 's', 'n' },
-      -- whether to preselect the first item in the completion list
-      preselect = true,
+      -- Controls how the completion items are selected
+      -- 'preselect' will automatically select the first item in the completion list
+      -- 'manual' will not select any item by default
+      -- 'auto_insert' will not select any item by default, and insert the completion items automatically when selecting them
+      selection = 'preselect',
       -- Controls how the completion items are rendered on the popup window
       -- 'simple' will render the item's kind icon the left alongside the label
       -- 'reversed' will render the label on the left and the kind icon + name on the right

@@ -37,4 +37,38 @@ function utils.cache_get_completions_func(fn, module)
   return cached_function
 end
 
+--- @param responses blink.cmp.CompletionResponse[]
+--- @return blink.cmp.CompletionResponse
+function utils.concat_responses(responses)
+  local is_cached = true
+  local is_incomplete_forward = false
+  local is_incomplete_backward = false
+  local items = {}
+
+  for _, response in ipairs(responses) do
+    is_cached = is_cached and response.is_cached
+    is_incomplete_forward = is_incomplete_forward or response.is_incomplete_forward
+    is_incomplete_backward = is_incomplete_backward or response.is_incomplete_backward
+    vim.list_extend(items, response.items)
+  end
+
+  return {
+    is_cached = is_cached,
+    is_incomplete_forward = is_incomplete_forward,
+    is_incomplete_backward = is_incomplete_backward,
+    items = items,
+  }
+end
+
+--- @param item blink.cmp.CompletionItem
+--- @return lsp.CompletionItem
+function utils.blink_item_to_lsp_item(item)
+  local lsp_item = vim.deepcopy(item)
+  lsp_item.cursor_column = nil
+  lsp_item.score_offset = nil
+  lsp_item.client_id = nil
+  lsp_item.source = nil
+  return lsp_item
+end
+
 return utils

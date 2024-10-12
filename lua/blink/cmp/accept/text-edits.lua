@@ -7,7 +7,7 @@ function text_edits.get_from_item(item)
   -- from when the items were fetched versus the current.
   -- hack: is there a better way?
   if item.textEdit ~= nil then
-    local text_edit = utils.shallow_copy(item.textEdit)
+    local text_edit = vim.deepcopy(item.textEdit)
     local offset = vim.api.nvim_win_get_cursor(0)[2] - item.cursor_column
     text_edit.range['end'].character = text_edit.range['end'].character + offset
     return text_edit
@@ -28,7 +28,7 @@ function text_edits.apply_additional_text_edits(item)
   -- LSPs can either include these in the initial response or require a resolve
   -- These are used for things like auto-imports
   -- todo: if the main text edit was before this text edit, do we need to compensate?
-  if item.additionalTextEdits ~= nil then
+  if item.additionalTextEdits ~= nil and next(item.additionalTextEdits) ~= nil then
     text_edits.apply_text_edits(item.client_id, item.additionalTextEdits)
   else
     require('blink.cmp.sources.lib').resolve(item, function(resolved_item)

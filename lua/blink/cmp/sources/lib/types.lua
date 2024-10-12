@@ -9,9 +9,21 @@
 --- @field items blink.cmp.CompletionItem[]
 ---
 --- @class blink.cmp.Source
---- @field new fun(opts: table): blink.cmp.Source
+--- @field new fun(config: blink.cmp.SourceProviderConfig): blink.cmp.Source
 --- @field get_trigger_characters (fun(self: blink.cmp.Source): string[]) | nil
 --- @field get_completions fun(self: blink.cmp.Source, context: blink.cmp.Context, callback: fun(response: blink.cmp.CompletionResponse)): (fun(): nil) | nil
 --- @field filter_completions (fun(self: blink.cmp.Source, response: blink.cmp.CompletionResponse): blink.cmp.CompletionItem[]) | nil
 --- @field should_show_completions (fun(self: blink.cmp.Source, context: blink.cmp.Context, response: blink.cmp.CompletionResponse): boolean) | nil
 --- @field resolve (fun(self: blink.cmp.Source, item: blink.cmp.CompletionItem, callback: fun(resolved_item: lsp.CompletionItem | nil)): ((fun(): nil) | nil)) | nil
+---
+--- @class blink.cmp.SourceProvider
+--- @field name string
+--- @field config blink.cmp.SourceProviderConfig
+--- @field opts table | nil
+--- @field get_trigger_characters fun(self: blink.cmp.SourceProvider): string[]
+--- @field get_completions fun(self: blink.cmp.SourceProvider, context: blink.cmp.Context): blink.cmp.Task
+--- @field filter_completions fun(self: blink.cmp.SourceProvider, response: blink.cmp.CompletionResponse): blink.cmp.CompletionItem[]
+--- @field should_show_completions fun(self: blink.cmp.SourceProvider, context: blink.cmp.Context, response: blink.cmp.CompletionResponse): boolean
+--- @field resolve fun(self: blink.cmp.SourceProvider, item: blink.cmp.CompletionItem): blink.cmp.Task
+--- @field get_signature_help_trigger_characters fun(self: blink.cmp.SourceProvider): string[]
+--- @field get_signature_help fun(self: blink.cmp.SourceProvider, context: blink.cmp.SignatureHelpContext): blink.cmp.Task
