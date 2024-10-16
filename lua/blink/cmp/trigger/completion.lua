@@ -38,7 +38,7 @@ function trigger.activate_autocmds()
         return
 
       -- ignore if in a special buffer
-      elseif utils.is_special_buffer() then
+      elseif utils.is_ignored_buffer() then
         trigger.hide()
 
       -- character forces a trigger according to the sources, create a fresh context
@@ -61,7 +61,7 @@ function trigger.activate_autocmds()
 
   vim.api.nvim_create_autocmd({ 'CursorMovedI', 'InsertEnter' }, {
     callback = function(ev)
-      if utils.is_special_buffer() then return end
+      if utils.is_ignored_buffer() then return end
 
       -- we were told to ignore the cursor moved event, so we update the context
       -- but don't send an on_show event upstream
@@ -144,13 +144,18 @@ function trigger.suppress_events_for_callback(cb)
     and is_insert_mode
 end
 
---- @param opts { trigger_character?: string, send_upstream?: boolean } | nil
+--- @param opts { trigger_character?: string, send_upstream?: boolean, force?: boolean } | nil
 function trigger.show(opts)
   opts = opts or {}
 
   local cursor = vim.api.nvim_win_get_cursor(0)
   -- already triggered at this position, ignore
-  if trigger.context ~= nil and cursor[1] == trigger.context.cursor[1] and cursor[2] == trigger.context.cursor[2] then
+  if
+    not opts.force
+    and trigger.context ~= nil
+    and cursor[1] == trigger.context.cursor[1]
+    and cursor[2] == trigger.context.cursor[2]
+  then
     return
   end
 
@@ -177,7 +182,6 @@ function trigger.listen_on_show(callback) trigger.event_targets.on_show = callba
 
 function trigger.hide()
   if not trigger.context then return end
-
   trigger.context = nil
   trigger.event_targets.on_hide()
 end

@@ -89,6 +89,7 @@
 --- @field border? blink.cmp.WindowBorder
 --- @field order? "top_down" | "bottom_up"
 --- @field direction_priority? ("n" | "s")[]
+--- @field auto_show? boolean
 --- @field selection? "preselect" | "manual" | "auto_insert"
 --- @field winhighlight? string
 --- @field scrolloff? number
@@ -133,6 +134,7 @@
 --- @field highlight? blink.cmp.HighlightConfig
 --- @field nerd_font_variant? 'mono' | 'normal'
 --- @field kind_icons? table<string, string>
+--- @field blocked_filetypes? string[]
 
 --- @type blink.cmp.Config
 local config = {
@@ -250,6 +252,8 @@ local config = {
       -- which directions to show the window,
       -- falling back to the next direction when there's not enough space
       direction_priority = { 's', 'n' },
+      -- Controls whether the completion window will automatically show when typing
+      auto_show = true,
       -- Controls how the completion items are selected
       -- 'preselect' will automatically select the first item in the completion list
       -- 'manual' will not select any item by default
@@ -258,6 +262,7 @@ local config = {
       -- Controls how the completion items are rendered on the popup window
       -- 'simple' will render the item's kind icon the left alongside the label
       -- 'reversed' will render the label on the left and the kind icon + name on the right
+      -- 'minimal' will render the label on the left and the kind name on the right
       -- 'function(blink.cmp.CompletionRenderContext): blink.cmp.Component[]' for custom rendering
       draw = 'simple',
       -- Controls the cycling behavior when reaching the beginning or end of the completion list.
@@ -281,6 +286,7 @@ local config = {
         autocomplete_north = { 'e', 'w', 'n', 's' },
         autocomplete_south = { 'e', 'w', 's', 'n' },
       },
+      -- Controls whether the documentation window will automatically show when selecting a completion item
       auto_show = false,
       auto_show_delay_ms = 500,
       update_delay_ms = 50,
@@ -305,6 +311,9 @@ local config = {
   -- set to 'mono' for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
   -- adjusts spacing to ensure icons are aligned
   nerd_font_variant = 'normal',
+
+  -- don't show completions or signature help for these filetypes. Keymaps are also disabled.
+  blocked_filetypes = {},
 
   kind_icons = {
     Text = '󰉿',
