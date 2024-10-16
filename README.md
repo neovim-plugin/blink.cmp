@@ -43,6 +43,8 @@
   -- On musl libc based systems you need to add this flag
   -- build = 'RUSTFLAGS="-C target-feature=-crt-static" cargo build --release',
 
+  ---@module 'blink.cmp'
+  ---@type blink.cmp.Config
   opts = {
     highlight = {
       -- sets the fallback highlight groups to nvim-cmp's highlight groups
@@ -53,10 +55,10 @@
     -- set to 'mono' for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
     -- adjusts spacing to ensure icons are aligned
     nerd_font_variant = 'normal',
-    
+
     -- experimental auto-brackets support
     -- accept = { auto_brackets = { enabled = true } }
-    
+
     -- experimental signature help support
     -- trigger = { signature_help = { enabled = true } }
   }
@@ -139,6 +141,7 @@ MiniDeps.add({
     show = '<C-space>',
     hide = '<C-e>',
     accept = '<Tab>',
+    select_and_accept = {},
     select_prev = { '<Up>', '<C-p>' },
     select_next = { '<Down>', '<C-n>' },
 
@@ -201,6 +204,10 @@ MiniDeps.add({
   },
 
   fuzzy = {
+    -- 'prefix' will fuzzy match on the text before the cursor
+    -- 'full' will fuzzy match on the text before *and* after the cursor
+    -- example: 'foo_|_bar' will match 'foo_' for 'prefix' and 'foo__bar' for 'full'
+    keyword_range = 'prefix',
     -- frencency tracks the most recently/frequently used items and boosts the score of the item
     use_frecency = true,
     -- proximity bonus boosts the score of items with a value in the buffer
@@ -241,10 +248,10 @@ MiniDeps.add({
           keyword_length = 0,
           score_offset = 0,
           trigger_characters = { 'f', 'o', 'o' },
-      }, 
+      },
       -- the following two sources have additional options
-      { 
-        'blink.cmp.sources.path', 
+      {
+        'blink.cmp.sources.path',
         name = 'Path',
         score_offset = 3,
         opts = {
@@ -267,7 +274,7 @@ MiniDeps.add({
           ignored_filetypes = {},
         },
       },
-      { 
+      {
         'blink.cmp.sources.buffer',
         name = 'Buffer',
         fallback_for = { 'LSP' },

@@ -68,6 +68,7 @@
 --- @field forceVersion? string | nil
 
 --- @class blink.cmp.FuzzyConfig
+--- @field keyword_range? 'prefix' | 'full'
 --- @field use_frecency? boolean
 --- @field use_proximity? boolean
 --- @field max_items? number
@@ -144,6 +145,7 @@ local config = {
     show = '<C-space>',
     hide = '<C-e>',
     accept = '<Tab>',
+    select_and_accept = {},
     select_prev = { '<Up>', '<C-p>' },
     select_next = { '<Down>', '<C-n>' },
 
@@ -206,6 +208,10 @@ local config = {
   },
 
   fuzzy = {
+    -- 'prefix' will fuzzy match on the text before the cursor
+    -- 'full' will fuzzy match on the text before *and* after the cursor
+    -- example: 'foo_|_bar' will match 'foo_' for 'prefix' and 'foo__bar' for 'full'
+    keyword_range = 'prefix',
     -- frencency tracks the most recently/frequently used items and boosts the score of the item
     use_frecency = true,
     -- proximity bonus boosts the score of items with a value in the buffer
