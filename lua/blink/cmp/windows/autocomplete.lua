@@ -261,7 +261,7 @@ function autocomplete.draw()
     table.insert(
       components_list,
       draw_fn({
-        labelDetails = labelDetails,
+        label_details = item.labelDetails,
         item = item,
         label = label,
         kind = kind,
