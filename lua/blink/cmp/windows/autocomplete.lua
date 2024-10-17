@@ -252,6 +252,7 @@ function autocomplete.draw()
   for _, item in ipairs(autocomplete.items) do
     local kind = require('blink.cmp.types').CompletionItemKind[item.kind] or 'Unknown'
     local kind_icon = config.kind_icons[kind] or config.kind_icons.Field
+    local labelDetails = item.labelDetails
     -- Some LSPs can return labels with newlines.
     -- Escape them to avoid errors in nvim_buf_set_lines when rendering the autocomplete menu.
     local label = item.label:gsub('\n', '\\n')
@@ -260,6 +261,7 @@ function autocomplete.draw()
     table.insert(
       components_list,
       draw_fn({
+        labelDetails = labelDetails,
         item = item,
         label = label,
         kind = kind,
